@@ -1,0 +1,4 @@
+ec2:
+    name: ec2-instance
+    image: ami-test
+    size: t2.micro

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"os"
 	"text/template"
@@ -12,21 +13,27 @@ type application struct {
 	templateCache map[string]*template.Template
 }
 
+type ec2Config struct {
+	Name  string `yaml:"name"`
+	Image string `yaml:"image"`
+	Size  string `yaml:"size"`
+}
+
 type resource struct {
-	Name  string
-	Image string
-	Size  string
+	EC2 ec2Config `yaml:"ec2"`
 }
 
 func main() {
-	resource := resource{
-		Name:  "ec2-instance",
-		Image: "ami-test",
-		Size:  "t2.micro",
-	}
+	configFileName := flag.String("config", "config/config.yaml", "the config file to use")
+	flag.Parse()
 
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+
+	resource := resource{}
+	if err := readYAMLConfig(*configFileName, &resource); err != nil {
+		errorLog.Fatal(err)
+	}
 
 	templateCache, err := newTemplateCache()
 	if err != nil {

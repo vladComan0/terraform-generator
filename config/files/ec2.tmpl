@@ -1,6 +1,0 @@
-{{define "main"}}
-resource "aws_instance" "{{.Name}}" {
-  ami           = "{{.Image}}"
-  instance_type = "{{.Size}}"
-}
-{{end}}

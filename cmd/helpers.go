@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
+
+	"gopkg.in/yaml.v3"
 )
 
 func (app *application) generate(file string, data interface{}) error {
@@ -16,4 +18,12 @@ func (app *application) generate(file string, data interface{}) error {
 	}
 
 	return nil
+}
+
+func readYAMLConfig(filename string, out interface{}) error {
+	yamlConfig, err := os.ReadFile(filename)
+	if err != nil {
+		return err
+	}
+	return yaml.Unmarshal(yamlConfig, out)
 }
