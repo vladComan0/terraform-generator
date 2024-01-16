@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"text/template"
@@ -25,6 +26,7 @@ type resource struct {
 
 func main() {
 	configFileName := flag.String("config", "config/config.yaml", "the config file to use")
+	destinationFileName := flag.String("destination", "terraform.hcl", "the destination file to write to")
 	flag.Parse()
 
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
@@ -46,7 +48,12 @@ func main() {
 		templateCache: templateCache,
 	}
 
-	if err = app.generate("ec2.tmpl", resource); err != nil {
+	destination, err := os.Create(fmt.Sprintf("generated/%s", *destinationFileName))
+	if err != nil {
+		errorLog.Fatal(err)
+	}
+
+	if err = app.generateHCL("ec2.tmpl", resource, destination); err != nil {
 		errorLog.Fatal(err)
 	}
 }

@@ -1,8 +1,8 @@
-{{ define "main" }}
-{{ with .EC2 }}
+{{- define "main" }}
+{{- with .EC2 }}
 resource "aws_instance" "{{ .Name }}" {
   ami           = "{{ .Image }}"
   instance_type = "{{ .Size }}"
 }
-{{ end }}
-{{ end }}
+{{- end }}
+{{- end }}
