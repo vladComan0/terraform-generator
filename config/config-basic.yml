@@ -1,0 +1,35 @@
+resources:
+  - ec2:
+      name: "EC2Instance1"
+      properties:
+        instanceType: "t2.micro"
+        ami: "ami-12345678"
+        keyName: "my-keypair"
+        securityGroups:
+          - "sg-12345678"
+        tags:
+          Project: "MyProject"
+          Environment: "Development"
+
+  - s3:
+      name: "MyS3Bucket"
+      properties:
+        bucketName: "my-bucket"
+        region: "us-west-1"
+        publicAccess: false
+        tags:
+          Project: "MyProject"
+          Environment: "Acceptance"
+
+  - sqs:
+      name: "MySQSQueue"
+      properties:
+        visibilityTimeout: 30
+        messageRetentionPeriod: 345600
+        delaySeconds: 0
+        receiveMessageWaitTimeSeconds: 0
+        fifoQueue: false
+        contentBasedDeduplication: false
+        tags:
+          Project: "MyProject"
+          Environment: "Development"

@@ -1,0 +1,60 @@
+resources:
+  - vpc:
+      name: "ExampleVPC"
+      properties:
+        cidrBlock: "10.0.0.0/16"
+        enableDnsSupport: true
+        enableDnsHostnames: true
+
+  - subnets:
+      - name: "SubnetA"
+        properties:
+          vpcId: "<VPC_ID_A>"
+          cidrBlock: "10.0.1.0/24"
+          availabilityZone: "us-east-1a"
+          mapPublicIpOnLaunch: true
+
+      - name: "SubnetB"
+        properties:
+          vpcId: "<VPC_ID_B>"
+          cidrBlock: "10.0.2.0/24"
+          availabilityZone: "us-east-1b"
+          mapPublicIpOnLaunch: true
+
+  - securityGroup:
+      name: "ExampleSecurityGroup"
+      properties:
+        name: "example_sg"
+        description: "Example security group"
+        vpcId: "<VPC_ID>"
+        ingress:
+          - fromPort: 80
+            toPort: 80
+            protocol: "tcp"
+            cidrBlocks:
+              - "0.0.0.0/0"
+
+  - routeTable:
+      name: "ExampleRouteTable"
+      properties:
+        vpcId: "<VPC_ID>"
+        routes:
+          - destinationCidrBlock: "0.0.0.0/0"
+            gatewayId: "<INTERNET_GATEWAY_ID>"
+
+  - networkAcl:
+      name: "ExampleNetworkAcl"
+      properties:
+        vpcId: "<VPC_ID>"
+        inbound:
+          - ruleAction: "allow"
+            protocol: "tcp"
+            ruleNumber: 100
+            fromPort: 80
+            toPort: 80
+            cidrBlock: "0.0.0.0/0"
+
+  - internetGateway:
+      name: "ExampleInternetGateway"
+      properties:
+        vpcId: "<VPC_ID>"

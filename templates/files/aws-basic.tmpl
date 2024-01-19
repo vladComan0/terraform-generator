@@ -1,0 +1,47 @@
+{{- define "main" }}
+{{- range . }}
+  {{- with .EC2 }}
+resource "aws_instance" "{{ .Name }}" {
+  ami             = "{{ .Properties.AMI }}"
+  instance_type   = "{{ .Properties.InstanceType }}"
+  key_name        = "{{ .Properties.KeyName }}"
+  security_groups = [{{ range $index, $sg := .Properties.SecurityGroups }}{{ if $index }}, {{ end }}"{{ $sg }}"{{ end }}]
+  tags = {
+    {{- range $key, $value := .Properties.Tags }}
+    "{{ $key }}" = "{{ $value }}"
+    {{- end }}
+  }
+}
+  {{- end }}
+  {{- with .S3 }}
+resource "aws_s3_bucket" "{{ .Name }}" {
+  bucket        = "{{ .Properties.BucketName }}"
+  acl           = "{{ if .Properties.PublicAccess }}public-read{{ else }}private{{ end }}"
+  region        = "{{ .Properties.Region }}"
+  force_destroy = true
+  tags = {
+    {{- range $key, $value := .Properties.Tags }}
+    "{{ $key }}" = "{{ $value }}"
+    {{- end }}
+  }
+}
+  {{- end }}
+  {{- with .SQS }}
+resource "aws_sqs_queue" "{{ .Name }}" {
+  visibility_timeout_seconds         = {{ .Properties.VisibilityTimeout }}
+  message_retention_seconds          = {{ .Properties.MessageRetentionPeriod }}
+  delay_seconds                      = {{ .Properties.DelaySeconds }}
+  receive_wait_time_seconds          = {{ .Properties.ReceiveMessageWaitTimeSeconds }}
+  fifo_queue                         = {{ .Properties.FifoQueue }}
+  content_based_deduplication        = {{ .Properties.ContentBasedDeduplication }}
+
+  tags = {
+    {{- range $key, $value := .Properties.Tags }}
+    "{{ $key }}" = "{{ $value }}"
+    {{- end }}
+  }
+}
+  {{- end }}
+
+{{- end }}
+{{- end }}
